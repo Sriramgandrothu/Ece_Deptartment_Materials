@@ -62,6 +62,10 @@ mongoose
     console.log("====================================");
   });
 
+  app.get("/hello", (req, res) => {
+    res.send("Hello, World!");
+  });
+  
 /* ROUTES */
 app.use("/api/auth", authRouter);
 app.use("/api/batches", batchRouter);
@@ -75,6 +79,7 @@ app.use("/api/ebooks", eBookRouter);
 app.use("/api/transactions", transactionRouter);
 app.use("/api/genral", genralRouter);
 app.use("/api/clearance", clearanceRouter);
+app.get("/hello");
 
 /* ERROR HANLDER MIDDLEWARE */
 app.use(errorHandlerMiddleware);
