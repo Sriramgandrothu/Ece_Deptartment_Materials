@@ -62,10 +62,10 @@ mongoose
     console.log("====================================");
   });
 
-  app.get("/hello", (req, res) => {
-    res.send("Hello, World!");
-  });
-  
+app.get("/hello", (req, res) => {
+  res.send("Hello, World!");
+});
+
 /* ROUTES */
 app.use("/api/auth", authRouter);
 app.use("/api/batches", batchRouter);
