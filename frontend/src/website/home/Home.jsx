@@ -131,29 +131,7 @@ const Home = () => {
       {/* END OF POPULAR BOOKS SECTIONS */}
 
       {/* Counter Section */}
-      <section className="counter__section">
-        {/* <div>
-          <FaBook className="icon" />
-          <h3>Total Books</h3>
-          <p>{data?.totalBooks}</p>
-        </div> */}
 
-        <div>
-          <FaAtlas className="icon" />
-          <h3>Total Materials </h3>
-          <p>{data?.totalEBooks}</p>
-        </div>
-        {/* <div>
-          <FaUser className="icon" />
-          <h3>Total Users </h3>
-          <p>{data?.totalUsers}</p>
-        </div> */}
-        <div>
-          <FaLayerGroup className="icon" />
-          <h3>Total Categories</h3>
-          <p>{data?.totalCategories}</p>
-        </div>
-      </section>
       {/* End of Counter Section */}
 
       <CustomSlider data={data?.newBooks} />
