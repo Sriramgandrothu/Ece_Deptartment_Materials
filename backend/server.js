@@ -22,7 +22,6 @@ import {
   transactionRouter,
 } from "./routes/index.js";
 import { errorHandlerMiddleware } from "./middlewares/index.js";
-
 /* CONFIGURATION */
 const app = express();
 app.use(express.json({ limit: "5mb" }));
