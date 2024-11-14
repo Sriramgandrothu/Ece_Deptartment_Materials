@@ -50,9 +50,9 @@ class StudentController {
       /* SEND WELCOME MAIL TO TEACHER AND ASK TO CHANGE THEIR PASSWORD */
       await sendMail({
         to: req.body.email,
-        subject: `Welcome to GGC Library Management System - Password Reset Required`,
+        subject: `Welcome to ECE Resource Hub!! - Password Reset Required`,
         text: `Dear ${req.body.name},
-                    Welcome to the GGC Library Management System! Your account has been created by our admin.
+                    Welcome to the ECE Resource Hub!! Your account has been created by our admin.
                     Login Credentials:
                     Username/Email: ${req.body.email}
                     Default Password: ${password}

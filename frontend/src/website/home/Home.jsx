@@ -75,7 +75,7 @@ const Home = () => {
       {/* End of Welcome message */}
 
       {/* START OF POPULAR BOOKS SECTIONS */}
-      <section className="popular__books">
+      {/* <section className="popular__books">
         <div className="heading">
           <h1>Popular Books</h1>
         </div>
@@ -127,7 +127,7 @@ const Home = () => {
             See All
           </Link>
         </div>
-      </section>
+      </section> */}
       {/* END OF POPULAR BOOKS SECTIONS */}
 
       {/* Counter Section */}
@@ -140,14 +140,14 @@ const Home = () => {
 
         <div>
           <FaAtlas className="icon" />
-          <h3>Total EBooks </h3>
+          <h3>Total Materials </h3>
           <p>{data?.totalEBooks}</p>
         </div>
-        <div>
+        {/* <div>
           <FaUser className="icon" />
           <h3>Total Users </h3>
           <p>{data?.totalUsers}</p>
-        </div>
+        </div> */}
         <div>
           <FaLayerGroup className="icon" />
           <h3>Total Categories</h3>

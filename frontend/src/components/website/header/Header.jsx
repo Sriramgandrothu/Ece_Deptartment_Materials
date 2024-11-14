@@ -46,7 +46,7 @@ const Header = () => {
       <nav className="bg__accent">
         <div className="logo text__primary">
           <GiBookAura className="logo__icon" />
-          <span>Study Materials</span>
+          <span>Resource Hub!!</span>
         </div>
         <div className="center">
           <NavLink to="/" className="text__color ">

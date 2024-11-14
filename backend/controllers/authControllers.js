@@ -3,7 +3,6 @@ import {
   ErrorHandlerService,
   deleteFile,
   sendMail,
-  tokenService,
 } from "../services/index.js";
 import Jimp from "jimp";
 import {
@@ -29,117 +28,21 @@ class AuthController {
         .populate("departement");
       if (!user) {
         return next(
-          ErrorHandlerService.wrongCredentials("User not exist of that email.")
+          ErrorHandlerService.wrongCredentials("User does not exist with that email.")
         );
       }
     } catch (error) {
       next(error);
     }
-    /* COMPARE PASSWORD WIHT STORED HASHED PASSWORD */
+    /* COMPARE PASSWORD WITH STORED HASHED PASSWORD */
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return next(ErrorHandlerService.wrongCredentials("Invalid password."));
     }
 
-    /* GENERAT TOKENS  */
-    const { accessToken, refreshToken } = await tokenService.genrateTokens({
-      _id: user._id,
-      role: user.role,
-    });
-
-    /* SAVE REFRESH TOKEN INTO DB OR UPDATE PREVIOUS REFRESH TOKEN OF USER */
-    try {
-      const isExist = await tokenService.findRefreshToken({ user: user._id });
-      if (isExist) {
-        /* IF ALREADY EXIST TOKEN INTO DB THEN UPDATE TOKEN */
-        await tokenService.updateRefreshToken(
-          { user: user._id },
-          { token: refreshToken }
-        );
-      } else {
-        /* IF NOT THEN SIMPLY SAVED IT INTO DB */
-        await tokenService.saveRefreshToken({
-          user: user._id,
-          token: refreshToken,
-        });
-      }
-    } catch (error) {
-      return next(error);
-    }
-
-    /* SET COOKIES  */
-    res.cookie("accessToken", accessToken, {
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-      httpOnly: true,
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-      httpOnly: true,
-    });
-
     return res.status(200).json({ isAuth: true, user: user });
   }
 
-  async refreshTokens(req, res, next) {
-    // GET REFRESH TOKEN FROM COOKIES
-    const { refreshToken: refreshTokenFromCookie } = req.cookies;
-    // VERIFY REFRESH TOKEN
-    let userData;
-    try {
-      userData = await tokenService.verifyRefreshToken(refreshTokenFromCookie);
-    } catch (error) {
-      return next(ErrorHandlerService.unAuthorized());
-    }
-
-    try {
-      // CHECK REFRESH TOKEN IS IN DB
-      const token = await tokenService.findRefreshToken({
-        user: userData._id,
-        token: refreshTokenFromCookie,
-      });
-      if (!token) {
-        return next(ErrorHandlerService.unAuthorized("No token found !"));
-      }
-
-      // ALSO CHECK USER EXIST
-      const userExist = await UserModel.findOne({ _id: userData._id })
-        .populate("batch")
-        .populate("departement");
-      if (!userExist) {
-        return next(ErrorHandlerService.unAuthorized("No user found!"));
-      }
-
-      // GENRATE NEW REFRESH TOKEN
-      const { refreshToken, accessToken } = await tokenService.genrateTokens({
-        _id: userData._id,
-        role: userData.role,
-      });
-      // UPDATE REFRESH TOKEN IN DB
-      await tokenService.updateRefreshToken(
-        { user: userData._id },
-        { token: refreshToken }
-      );
-      // SET NEW COOKIES
-      res.cookie("accessToken", accessToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        httpOnly: true,
-      });
-      res.cookie("refreshToken", refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        httpOnly: true,
-      });
-      // retrun response
-      return res.status(200).json({
-        user: userExist,
-        isAuth: true,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  /* AUTHENTICATED USER ONLY */
   async changePassword(req, res, next) {
     const { currentPassword, newPassword } = req.body;
     /* REQUEST VALIDATION */
@@ -148,7 +51,7 @@ class AuthController {
     }
 
     try {
-      /* CHECK USER EXIST OR NOT ? */
+      /* CHECK IF USER EXISTS */
       const user = await UserModel.findOne({ _id: req.userData._id });
       if (!user) {
         return next(ErrorHandlerService.notFound());
@@ -160,12 +63,11 @@ class AuthController {
           ErrorHandlerService.wrongCredentials("Current password is wrong!")
         );
       }
-      /* HASHED NEW PASSWORD BEFORE SAVED INTO DB */
-      const hashedPassowrd = await bcrypt.hash(newPassword, 10);
-      // UPDAT PASSWORD
-      await UserModel.findByIdAndUpdate(user._id, { password: hashedPassowrd });
+      /* HASH NEW PASSWORD BEFORE SAVING TO DB */
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await UserModel.findByIdAndUpdate(user._id, { password: hashedPassword });
 
-      return res.status(200).json({ msg: "Password Changed Successfully !" });
+      return res.status(200).json({ msg: "Password Changed Successfully!" });
     } catch (error) {
       next(error);
     }
@@ -179,29 +81,26 @@ class AuthController {
       return next(error);
     }
     try {
-      /* CHECK EMAIL IS VALID AND USER EXIST ? */
+      /* CHECK IF EMAIL IS VALID AND USER EXISTS */
       const user = await UserModel.findOne({ email });
       if (!user) {
         return next(ErrorHandlerService.notFound("Email does not exist"));
       }
-      /* GENRATE PASSWORD RESET TOKEN */
-      const resetToken = await tokenService.genratePasswordResetToke({
-        _id: user._id,
-      });
+      /* GENERATE PASSWORD RESET TOKEN */
+      const resetToken = /* Generate or assign a unique token */;
 
       /* STORE PASSWORD RESET TOKEN INTO DB */
       user.resetToken = resetToken;
       await user.save();
 
-      // send email
-      // console.log(`Email Send ! Your password reset link is ${resetToken}`);
+      // Send email
       await sendMail({
         to: user.email,
-        from: "ggclibrary@gmail.com",
-        subject: "GGC Library Password Reset Link",
-        text: `Hello ${user.name} ! Your password reset link is  http://localhost:5173/new-password/${resetToken}/, Click on that link in order to change password`,
+        from: "sriramgandrothu@gmail.com",
+        subject: "ECE Resource Hub Password Reset Link",
+        text: `Hello ${user.name}! Your password reset link is http://localhost:5173/new-password/${resetToken}/. Click on the link to change your password.`,
       });
-      return res.status(200).json({ msg: "Email send...." });
+      return res.status(200).json({ msg: "Email sent." });
     } catch (error) {
       next(error);
     }
@@ -209,71 +108,56 @@ class AuthController {
 
   async resetPassword(req, res, next) {
     const { newPassword, token } = req.body;
-    /* REQUEST VALIDATION  */
+    /* REQUEST VALIDATION */
     if (!newPassword || !token) {
       return next(ErrorHandlerService.validationError());
     }
-    /* CHECK TOKE IS VALID OR NOT */
+    /* CHECK IF TOKEN IS VALID */
     let userData;
     try {
-      userData = await tokenService.verifyPasswordResetToken(token);
+      userData = /* Verify the token */;
     } catch (error) {
       return next(
-        ErrorHandlerService.badRequest("Password reset token expire !")
+        ErrorHandlerService.badRequest("Password reset token expired!")
       );
     }
 
     try {
-      /* VALIDATE USER INTO DB */
+      /* VALIDATE USER IN DB */
       const user = await UserModel.findOne({
         _id: userData._id,
         resetToken: token,
       });
 
       if (!user) {
-        return next(ErrorHandlerService.badRequest("User Not Found  !"));
+        return next(ErrorHandlerService.badRequest("User not found!"));
       }
 
-      /* HASHED PASSWORD BEFORE SAVE INTO DB */
-      const hashedPassowrd = await bcrypt.hash(newPassword, 10);
-      user.password = hashedPassowrd;
+      /* HASH PASSWORD BEFORE SAVING TO DB */
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
       user.resetToken = undefined;
 
       await user.save();
-      return res.status(200).json({ msg: "Password reset successfully !" });
+      return res.status(200).json({ msg: "Password reset successfully!" });
     } catch (error) {
       next(error);
     }
   }
 
-  /* AUTHENTICATED USER ONLY */
   async logout(req, res, next) {
-    // GET REFRESH TOKEN FROM COOKIES
-    const { refreshToken } = req.cookies;
-    // REMOVE REFRESH TOKEN
-    try {
-      await tokenService.removeRefreshToken({ token: refreshToken });
-    } catch (error) {
-      return next(error);
-    }
-    // REMOVIE COOKIES
-    res.clearCookie("refreshToken");
-    res.clearCookie("accessToken");
-
     res.json({
       user: null,
       isAuth: false,
     });
   }
 
-  /* AUTHENTICATED USER ONLY */
   async updateProfileImage(req, res, next) {
     const { avatar } = req.body;
     if (!avatar) {
-      return next(ErrorHandlerService.validationError("Avatar Required !"));
+      return next(ErrorHandlerService.validationError("Avatar required!"));
     }
     try {
-      // Image Base64
       const buffer = Buffer.from(
         avatar.replace(/^data:image\/(png|jpg|jpeg);base64,/, ""),
         "base64"
@@ -281,20 +165,15 @@ class AuthController {
       const imagePath = `${Date.now()}-${Math.round(Math.random() * 1e9)}.png`;
 
       const jimResp = await Jimp.read(buffer);
-
       jimResp.resize(250, Jimp.AUTO).write(`${ROOT_PATH}/uploads/${imagePath}`);
-
-      /* UPDATE IMAGE PATH OF USER */
 
       const user = await UserModel.findById(req.userData._id);
       if (!user) {
-        return next(ErrorHandlerService.notFound("User not found !"));
+        return next(ErrorHandlerService.notFound("User not found!"));
       }
       if (user.imagePath) {
-        // Check previous image if have then delete it....
         deleteFile(`${user.imagePath}`);
       }
-      /* update image */
       user.imagePath = `uploads/${imagePath}`;
       await user.save();
       return res.status(200).json({ user, isAuth: true });
@@ -311,7 +190,7 @@ class AuthController {
         .populate("batch")
         .populate("departement");
       if (!user) {
-        return next(ErrorHandlerService.notFound("User Not Found"));
+        return next(ErrorHandlerService.notFound("User not found"));
       }
       return res.status(200).json({ user });
     } catch (error) {
@@ -319,4 +198,5 @@ class AuthController {
     }
   }
 }
+
 export default new AuthController();

@@ -49,7 +49,6 @@ class GenralController {
 
   async handleMessages(req, res, next) {
     const { action, replyMessage, _id } = req.body;
-    // console.log(req.body);
     try {
       const document = await ContactUsModel.findById(_id);
       if (!document) {
@@ -143,10 +142,8 @@ class GenralController {
         return next(ErrorHandlerService.notFound("Book Not Found"));
       }
       // Check if the user has already reviewed this book
-      /* find vs filter : find only return one first item or undefind if not find and it does not iterate complete arrary but in filter you can iterate complete arrary and if conditon match then returns into arrray */
-
       const existingReview = book.reviews.find((review) => {
-        return review.user._id == req.userData?._id;
+        return review.user._id == req.userData?._id;  // Removed token reference
       });
 
       if (existingReview) {
@@ -155,7 +152,7 @@ class GenralController {
         );
       }
       const newReview = {
-        user: req.userData?._id,
+        user: req.userData?._id,  // Removed token reference
         rating,
         comment,
       };
@@ -166,7 +163,7 @@ class GenralController {
       const totalRating = book.reviews.reduce(
         (accumulator, review) => accumulator + review.rating,
         0
-      ); // initail value of accumalator is 0
+      ); // initial value of accumulator is 0
       book.rating = parseFloat((totalRating / book.totalReviews).toFixed(2));
 
       await book.save();

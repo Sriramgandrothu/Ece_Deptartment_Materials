@@ -10,11 +10,11 @@ const Footer = () => {
         <div className="box1">
           <div className="logo text__primary">
             <GiBookAura className="icon" />
-            <h4>Study Materials</h4>
+            <h4>Resource Hub!!</h4>
           </div>
-          <p style={{ marginTop: "8px", lineHeight: "1.5rem" }}>
-            Gateway to knowledge, discovery, and lifelong learning for all GGC
-            students, faculty, and staff.: A welcoming and inclusive space for
+          <p style={{ marginTop: "8px", lineHeight: "1.5xrem" }}>
+            Gateway to knowledge, discovery, and lifelong learning for all ECE
+            students, faculty, and staff.: <br />A welcoming and inclusive space for
             all learners to come together and learn.
           </p>
         </div>
@@ -29,9 +29,9 @@ const Footer = () => {
           <Link to="/contact-us" className="text__color">
             Contact Us
           </Link>
-          <Link to="/login" className="text__color">
+          {/* <Link to="/login" className="text__color">
             Login
-          </Link>
+          </Link> */}
         </div>
 
         <div className="box3">
@@ -45,9 +45,9 @@ const Footer = () => {
           <Link to="/contact-us" className="text__color">
             Dashboard
           </Link>
-          <Link to="/login" className="text__color">
+          {/* <Link to="/login" className="text__color">
             Forget Password
-          </Link>
+          </Link> */}
         </div>
 
         <div className="box4">
