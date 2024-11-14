@@ -22,7 +22,6 @@ import {
   transactionRouter,
 } from "./routes/index.js";
 import { errorHandlerMiddleware } from "./middlewares/index.js";
-
 /* CONFIGURATION */
 const app = express();
 app.use(express.json({ limit: "5mb" }));
@@ -30,8 +29,9 @@ app.use(express.json({ limit: "5mb" }));
 const corsOptions = {
   credentials: true,  // Allow credentials such as cookies, authorization headers, etc.
   origin: [
-    'http://localhost:5173'
-    'https://eceresourcehub.vercel.app/'
+    'http://localhost:5173',
+    'https://eceresourcehub.vercel.app',
+    'https://resourcehubece.vercel.app/'
   ],
 };
 app.use(cors(corsOptions));
@@ -41,7 +41,6 @@ app.use(cookieParser());
 /* ABSOLUTE PATH OF BACKEND FOLDER */
 const __filename = fileURLToPath(import.meta.url);
 export const ROOT_PATH = path.dirname(__filename);
-// console.log(ROOT_PATH);
 
 /* STATIC FOLDER */
 app.use("/public", express.static("./public"));
@@ -49,21 +48,32 @@ app.use("/uploads", express.static("./uploads"));
 app.use("/documents", express.static("./documents"));
 
 /* MONGOOSE SETUP */
-mongoose
-  .connect(MONGO_DB_URI)
-  .then(() => {
-    console.log("MONGO DB CONNECTED SUCCESSFULLY 😍😍");
-    /* CREATE SERVER */
-    app.listen(APP_PORT, () => {
-      console.log(`SERVER IS LISTNING ON PORT ${APP_PORT}`);
+const connectToDatabase = async () => {
+  try {
+    // If MONGO_DB_URI is not defined, fallback to a local MongoDB URI
+    const dbURI = MONGO_DB_URI || "mongodb://localhost:27017/yourdbname";
+
+    await mongoose.connect(dbURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
-  })
-  .catch((err) => {
+
+    console.log("MONGO DB CONNECTED SUCCESSFULLY 😍😍");
+
+    // CREATE SERVER
+    app.listen(APP_PORT, () => {
+      console.log(`SERVER IS LISTENING ON PORT ${APP_PORT}`);
+    });
+  } catch (err) {
     console.log("SOMETHING WENT WRONG WHILE CONNECTING TO MONGO DB 😢😢");
     console.log("====================================");
     console.log(err);
     console.log("====================================");
-  });
+  }
+};
+
+// Call the function to connect to the database
+connectToDatabase();
 
 app.get("/hello", (req, res) => {
   res.send("Hello, World!");
@@ -82,7 +92,6 @@ app.use("/api/ebooks", eBookRouter);
 app.use("/api/transactions", transactionRouter);
 app.use("/api/genral", genralRouter);
 app.use("/api/clearance", clearanceRouter);
-app.get("/hello");
 
-/* ERROR HANLDER MIDDLEWARE */
+/* ERROR HANDLER MIDDLEWARE */
 app.use(errorHandlerMiddleware);
