@@ -104,7 +104,6 @@ const EBooks = () => {
             <AiOutlineSearch />
           </form>
         </div>
-
         <section className="books__section">
           <div className="card__wrapper">
             {booksData?.books.length !== 0 ? booksData?.books?.map((book) => {
