@@ -29,7 +29,7 @@ app.use(express.json({ limit: "5mb" }));
 const corsOptions = {
   credentials: true,  // Allow credentials such as cookies, authorization headers, etc.
   origin: [
-    'http://localhost:5173'
+    'http://localhost:5173',
     'https://eceresourcehub.vercel.app'
   ],
 };
