@@ -53,7 +53,10 @@ const connectToDatabase = async () => {
     // If MONGO_DB_URI is not defined, fallback to a local MongoDB URI
     const dbURI = MONGO_DB_URI || "mongodb://localhost:27017/yourdbname";
 
-    await mongoose.connect(dbURI);
+    await mongoose.connect(dbURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
     console.log("MONGO DB CONNECTED SUCCESSFULLY 😍😍");
 
