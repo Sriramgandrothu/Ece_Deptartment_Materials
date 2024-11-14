@@ -30,8 +30,7 @@ app.use(express.json({ limit: "5mb" }));
 const corsOptions = {
   credentials: true,  // Allow credentials such as cookies, authorization headers, etc.
   origin: [
-    'http://localhost:5173',    
-    'http://192.168.0.242:5173',
+    'http://localhost:5173'
   ],
 };
 app.use(cors(corsOptions));
