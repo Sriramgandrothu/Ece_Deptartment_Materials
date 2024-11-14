@@ -115,7 +115,7 @@ class AuthController {
     /* CHECK IF TOKEN IS VALID */
     let userData;
     try {
-      userData = /* Verify the token */;
+      // userData = /* Verify the token */
     } catch (error) {
       return next(
         ErrorHandlerService.badRequest("Password reset token expired!")

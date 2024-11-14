@@ -6,7 +6,7 @@ const authRouter = Router();
 
 /* END PONTS */
 authRouter.post("/login",authControllers.login);
-authRouter.get("/refresh-tokens",authControllers.refreshTokens);
+// authRouter.get("/refresh-tokens",authControllers.refreshTokens);
 authRouter.post("/forget-password",authControllers.forgetPassword);
 authRouter.post("/reset-password",authControllers.resetPassword);
 authRouter.get("/user-details",authControllers.getUserDetails);
