@@ -68,7 +68,6 @@ mongoose
 app.get("/hello", (req, res) => {
   res.send("Hello, World!");
 });
-
 /* ROUTES */
 app.use("/api/auth", authRouter);
 app.use("/api/batches", batchRouter);
