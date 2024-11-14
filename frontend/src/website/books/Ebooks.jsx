@@ -9,7 +9,6 @@ import { Pagination } from "../../components";
 
 const EBooks = () => {
   const [isFirstRender, setIsFirstRender] = useState(true);
-
   const [categories,setCategories] = useState(null);
   const [booksData, setBooksData] = useState(null);
   const [query, setQuery] = useState({
@@ -105,7 +104,6 @@ const EBooks = () => {
             <AiOutlineSearch />
           </form>
         </div>
-
         <section className="books__section">
           <div className="card__wrapper">
             {booksData?.books.length !== 0 ? booksData?.books?.map((book) => {
