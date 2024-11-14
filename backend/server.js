@@ -32,7 +32,8 @@ const corsOptions = {
   origin: [
     'http://localhost:5173',
     'https://resourcehubece.vercel.app',
-    'https://eceresources.vercel.app'
+    'https://eceresources.vercel.app',
+    'https://ecestudymaterials.vercel.app'
   ],
 };
 app.use(cors(corsOptions));
