@@ -87,7 +87,7 @@ class AuthController {
         return next(ErrorHandlerService.notFound("Email does not exist"));
       }
       /* GENERATE PASSWORD RESET TOKEN */
-      const resetToken = /* Generate or assign a unique token */;
+      const resetToken = /* Generate or assign a unique token */
 
       /* STORE PASSWORD RESET TOKEN INTO DB */
       user.resetToken = resetToken;
