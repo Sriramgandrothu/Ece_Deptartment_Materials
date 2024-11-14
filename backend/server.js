@@ -31,6 +31,7 @@ const corsOptions = {
   credentials: true,  // Allow credentials such as cookies, authorization headers, etc.
   origin: [
     'http://localhost:5173'
+    'https://eceresourcehub.vercel.app/'
   ],
 };
 app.use(cors(corsOptions));
