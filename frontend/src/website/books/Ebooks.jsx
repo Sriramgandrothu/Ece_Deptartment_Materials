@@ -9,7 +9,6 @@ import { Pagination } from "../../components";
 
 const EBooks = () => {
   const [isFirstRender, setIsFirstRender] = useState(true);
-
   const [categories,setCategories] = useState(null);
   const [booksData, setBooksData] = useState(null);
   const [query, setQuery] = useState({
